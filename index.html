@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>FlashBurn - 闪刻</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+  <!-- Desktop App Container -->
+  <div class="app-container">
+    
+    <!-- Custom Windows-style Titlebar -->
+    <header class="titlebar" id="titlebar">
+      <div class="titlebar-title">
+        <span class="titlebar-text">FlashBurn 闪刻</span>
+      </div>
+      <div class="win-controls">
+        <button class="win-ctrl-btn" id="theme-toggle-btn" title="切换深浅主题">
+          <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" fill="currentColor"/></svg>
+        </button>
+        <button class="win-ctrl-btn" id="min-btn" title="最小化">
+          <svg viewBox="0 0 12 12"><line x1="2" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1"/></svg>
+        </button>
+        <button class="win-ctrl-btn" id="max-btn" title="最大化">
+          <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" rx="0.5" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+        </button>
+        <button class="win-ctrl-btn close" id="close-btn" title="关闭">
+          <svg viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Window Layout -->
+    <div class="window-content">
+      
+      <!-- Hidden Empty Sidebar for JS selector safety -->
+      <aside class="sidebar" style="display: none !important;"></aside>
+
+      <!-- Main Workspace Panel -->
+      <main class="main-workspace">
+        
+        <!-- ================= TASK SELECTOR DASHBOARD ================= -->
+        <section class="page-content active" id="dashboard-page">
+          <div class="dashboard-layout">
+            <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+              <div>
+                <h1>FlashBurn 闪刻大厅</h1>
+                <p>请选择您需要执行的刻录或光盘介质管理任务</p>
+              </div>
+              <button class="mac-action-btn" id="btn-view-history" style="font-size: 13px; padding: 10px 16px;">📜 历史档案</button>
+            </div>
+            <div class="dashboard-grid">
+              <div class="dashboard-card" data-action="data-disc">
+                <div class="card-glow"></div>
+                <div class="card-icon">📁</div>
+                <h3>普通数据光盘</h3>
+                <p>将日常文件和文件夹保存到 CD 或 DVD 中，完整保留您原有的多级目录树层级。</p>
+              </div>
+              
+              <div class="dashboard-card" data-action="audio-cd">
+                <div class="card-glow"></div>
+                <div class="card-icon">🎵</div>
+                <h3>无损音乐唱片</h3>
+                <p>将 MP3/WAV 等常用音频制作成标准的 CD-DA 音乐光盘，可在车载或复古 CD 机中播放。</p>
+              </div>
+              
+              <div class="dashboard-card" data-action="video-dvd">
+                <div class="card-glow"></div>
+                <div class="card-icon">🎬</div>
+                <h3>家用 Video DVD</h3>
+                <p>将标准影音文件夹打包为标准的家用 DVD 格式，适配电视及家用多媒体播放机播放。</p>
+              </div>
+              
+              <div class="dashboard-card" data-action="iso-burn">
+                <div class="card-glow"></div>
+                <div class="card-icon">📀</div>
+                <h3>刻录映像文件</h3>
+                <p>将本地的 `.iso`、`.bin` 等光盘镜像以高精比特流形式对拷还原到空白光盘中。</p>
+              </div>
+              
+              <div class="dashboard-card" data-action="disc-clone">
+                <div class="card-glow"></div>
+                <div class="card-icon">👯</div>
+                <h3>提取与克隆光盘</h3>
+                <p>将物理光盘的内容读取并提取为本地 ISO 映像，或在多个驱动器间进行数据直拷贝。</p>
+              </div>
+              
+              <div class="dashboard-card" data-action="erase-disc">
+                <div class="card-glow"></div>
+                <div class="card-icon">🧹</div>
+                <h3>擦除可写光盘</h3>
+                <p>对 CD-RW、DVD-RW 等可重写介质执行快速激光擦除，瞬间清理所有区块索引。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= CLONE WORKSPACE PAGE ================= -->
+        <section class="page-content" id="clone-page">
+          <div class="workspace-layout">
+            
+            <!-- Left Side: Source & Target Configuration -->
+            <div class="workspace-files">
+              <div class="section-title-bar">
+                <button class="mac-action-btn" id="btn-clone-back" style="margin-right: 12px; padding: 6px 12px; font-size: 12px;">← 返回大厅</button>
+                <h2 style="flex: 1;">光盘克隆与提取</h2>
+              </div>
+              
+              <div class="cloner-container">
+                <div class="cloner-box">
+                  <div class="cloner-row">
+                    <div class="cloner-icon-large">👯</div>
+                    <h3>光盘提取为本地映像</h3>
+                    <p class="cloner-hint">该功能将通过底层原生通道，将物理光盘内容进行扇区级完整读取，并流式拼装生成标准的本地 `.iso` 映像文件。</p>
+                  </div>
+                  
+                  <div class="cloner-form">
+                    <div class="mac-form-group">
+                      <label>源驱动器 (物理光驱)</label>
+                      <div class="drive-select-grid" id="rip-source-select-grid">
+                        <!-- Dynamic source cards will be rendered here by JS -->
+                      </div>
+                      <select id="select-rip-source" style="display: none !important;">
+                        <option value="">未检测到物理驱动器</option>
+                      </select>
+                    </div>
+                    
+                    <div class="mac-form-group">
+                      <label>输出映像文件路径 (.iso)</label>
+                      <div class="path-input-group">
+                        <input type="text" id="input-rip-destination" class="mac-input" placeholder="请选择本地保存路径..." readonly>
+                        <button class="mac-action-btn" id="btn-choose-rip-path">选择路径</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Right Side: Action Trigger -->
+            <div class="workspace-settings">
+              <div class="mac-card status-card">
+                <div class="status-card-header">
+                  <div class="status-icon-wrapper">
+                    <span class="mac-disc-icon">💿</span>
+                  </div>
+                  <div class="status-info-wrapper">
+                    <h3 id="lbl-rip-disc-type">物理 CD/DVD 光盘</h3>
+                    <div class="status-sub-row">
+                      <span class="status-badge" id="lbl-rip-disc-status">等待放入光盘</span>
+                      <button class="mac-action-btn mini-btn" id="btn-refresh-rip-media" title="手动刷新物理光盘状态">🔄 刷新</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mac-analyzer-card">
+                <div class="analyzer-title">📊 扇区流读取参数</div>
+                <div class="analyzer-grid">
+                  <span class="analyzer-label">提取格式</span>
+                  <span class="analyzer-value">ISO-9660 Joliet</span>
+                  <span class="analyzer-label">读取速度</span>
+                  <span class="analyzer-value" style="color: var(--success-color);">Max (自动最高速)</span>
+                  <span class="analyzer-label">防刮花重试</span>
+                  <span class="analyzer-value">已激活 (Active)</span>
+                </div>
+              </div>
+              
+              <div class="mac-action-footer">
+                <button class="mac-btn secondary-btn" id="btn-rip-eject">弹出光盘</button>
+                <button class="mac-btn primary-btn" id="btn-start-rip" disabled>开始提取</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BURN WORKSPACE PAGE ================= -->
+        <section class="page-content" id="burn-page">
+          <div class="workspace-layout">
+            
+            <!-- Left Half: Drag Drop & File List -->
+            <div class="workspace-files">
+              <div class="section-title-bar">
+                <button class="mac-action-btn" id="btn-burn-back" style="margin-right: 12px; padding: 6px 12px; font-size: 12px;">← 返回大厅</button>
+                <h2 style="flex: 1;">刻录数据队列</h2>
+                <div class="list-actions">
+                  <button class="mac-action-btn" id="btn-add-files">
+                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/></svg>
+                    添加文件
+                  </button>
+                  <button class="mac-action-btn" id="btn-add-folder">
+                    <svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2zM19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/></svg>
+                    添加文件夹
+                  </button>
+                  <!-- Trash bin icon with explicit fill="currentColor" to fix visibility issue -->
+                  <button class="mac-action-btn danger-hover" id="btn-clear-list" title="清空文件列表">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- File List Container -->
+              <div class="file-list-wrapper">
+                <!-- ISO Mode view (Hidden by default) -->
+                <div class="iso-mode-view" id="iso-mode-view" style="display: none;">
+                  <div class="iso-box">
+                    <div class="iso-icon-large">💿</div>
+                    <h3 id="iso-file-name">BOOTABLE_IMAGE.ISO</h3>
+                    <p class="iso-stat-text" id="iso-file-size">1.46 GB (1,568,432,128 字节)</p>
+                    <div class="iso-badge-row">
+                      <span class="iso-badge">ISO 映像光盘文件</span>
+                      <span class="iso-badge success" id="iso-bootable-badge">系统引导记录已就绪 (Bootable)</span>
+                    </div>
+                    <p class="iso-hint">当前已锁定为“ISO 镜像对拷烧录模式”。软件将对该映像的每个物理扇区进行高精度比特级对拷。由于刻录模式限制，其他文件导入已被智能锁定。</p>
+                    <button class="win-btn mini-btn secondary-btn" id="btn-exit-iso-mode">切换回普通数据光盘模式</button>
+                  </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                  <div class="empty-icon-container">
+                    <svg viewBox="0 0 24 24" class="empty-icon">
+                      <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+                    </svg>
+                  </div>
+                  <p class="empty-text-main">将文件或文件夹拖拽到此处</p>
+                  <p class="empty-text-sub">支持直接从资源管理器拖拽，或点击上方按钮进行选择</p>
+                </div>
+
+                <!-- Active Files Grid -->
+                <table class="file-table" id="file-table" style="display: none;">
+                  <thead>
+                    <tr>
+                      <th>文件名</th>
+                      <th class="col-size">大小</th>
+                      <th class="col-type">类型</th>
+                      <th class="col-delete">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="file-list-body">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Total size summary bar -->
+              <div class="files-summary-bar">
+                <span id="files-count-summary">共 0 个文件</span>
+                <span id="files-size-summary">合计大小: 0 KB</span>
+              </div>
+            </div>
+
+            <!-- Right Half: Drive Status & Burning Options (macOS Inspector layout - NO scrollbars) -->
+            <div class="workspace-settings">
+              
+              <!-- Card 1: 介质状态 (Media Status) -->
+              <div class="mac-card status-card">
+                <div class="status-card-header">
+                  <div class="status-icon-wrapper">
+                    <span class="mac-disc-icon">💿</span>
+                  </div>
+                  <div class="status-info-wrapper">
+                    <h3 id="lbl-disc-type">DVD-R 4.7 GB</h3>
+                    <div class="status-sub-row">
+                      <span class="status-badge" id="lbl-disc-status">未检测到光盘</span>
+                      <button class="mac-action-btn mini-btn" id="btn-refresh-media" title="手动刷新光驱介质状态">🔄 刷新</button>
+                      <span class="label-badge" id="lbl-disc-label-text">卷标: 自动生成</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Mini progress line -->
+                <div class="mac-progress-box">
+                  <div class="mac-progress-track">
+                    <div class="mac-progress-fill" id="gauge-fill" style="width: 0%;"></div>
+                  </div>
+                  <div class="mac-progress-labels">
+                    <span id="lbl-disc-space">0.00 GB / 0.00 GB</span>
+                    <span id="gauge-warning-label" style="display: none;" class="warning-text">超载</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: 写入配置 (Burning Parameters) -->
+              <div class="mac-card settings-card">
+                <!-- Flat drive select cards -->
+                <div class="mac-form-group">
+                  <label>目标刻录机 (Target Burner)</label>
+                  <div class="drive-select-grid" id="drive-select-grid">
+                    <!-- Dynamic drive cards will be rendered here by JS -->
+                  </div>
+                </div>
+
+                <!-- Flat speed segmented pills -->
+                <div class="mac-form-group" style="margin-top: 15px;">
+                  <label>刻录写入速度 (Burn Speed)</label>
+                  <div class="speed-segmented-control" id="speed-segmented-control">
+                    <button type="button" class="speed-pill-btn active" data-value="max">Max (最快)</button>
+                    <button type="button" class="speed-pill-btn" data-value="8x">8x</button>
+                    <button type="button" class="speed-pill-btn" data-value="4x">4x</button>
+                    <button type="button" class="speed-pill-btn" data-value="2x">2x</button>
+                    <button type="button" class="speed-pill-btn" data-value="1x">1x</button>
+                  </div>
+                </div>
+
+                <!-- Hidden select lists for backwards compatibility with JS DOM selectors -->
+                <select id="select-drive" style="display: none !important;"></select>
+                <select id="select-speed" style="display: none !important;">
+                  <option value="max" selected>Max (自动最高速)</option>
+                  <option value="16x">16x (DVD 极速)</option>
+                  <option value="8x">8x (DVD 推荐)</option>
+                  <option value="4x">4x (安全备份)</option>
+                  <option value="2x">2x (高精对拷)</option>
+                  <option value="1x">1x (安全对拷)</option>
+                </select>
+
+                <!-- Hidden system input element, kept for JS DOM references -->
+                <div style="display: none;">
+                  <input type="text" id="input-label" value="202605271816">
+                </div>
+
+                <!-- Switches Matrix Grid -->
+                <div class="mac-switch-row">
+                  <label class="mac-switch-item">
+                    <div class="mac-switch-label">
+                      <span class="main-label">保留旧数据</span>
+                      <span class="sub-label">追加刻录</span>
+                    </div>
+                    <label class="win-switch">
+                      <input type="checkbox" id="switch-append-data">
+                      <span class="switch-slider"></span>
+                    </label>
+                  </label>
+                  
+                  <label class="mac-switch-item" id="switch-close-disc-item">
+                    <div class="mac-switch-label">
+                      <span class="main-label">关闭光盘</span>
+                      <span class="sub-label">禁止追加</span>
+                    </div>
+                    <label class="win-switch">
+                      <input type="checkbox" id="chk-close-disc">
+                      <span class="switch-slider"></span>
+                    </label>
+                  </label>
+                  
+                  <label class="mac-switch-item">
+                    <div class="mac-switch-label">
+                      <span class="main-label">校验数据</span>
+                      <span class="sub-label">写入后校验</span>
+                    </div>
+                    <label class="win-switch">
+                      <input type="checkbox" id="chk-verify-data" checked>
+                      <span class="switch-slider"></span>
+                    </label>
+                  </label>
+                  
+                  <label class="mac-switch-item">
+                    <div class="mac-switch-label">
+                      <span class="main-label">完成后弹出</span>
+                      <span class="sub-label">自动弹出</span>
+                    </div>
+                    <label class="win-switch">
+                      <input type="checkbox" id="chk-eject-disc" checked>
+                      <span class="switch-slider"></span>
+                    </label>
+                  </label>
+                </div>
+              </div>
+
+
+
+              <!-- Action Footer Dock (macOS capsule Pill buttons) -->
+              <div class="mac-action-footer">
+                <button class="mac-btn secondary-btn danger-hover" id="btn-erase-disc" disabled style="display: none;">
+                  <svg viewBox="0 0 24 24" class="btn-svg"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                  擦除光盘
+                </button>
+                <button class="mac-btn secondary-btn" id="btn-eject-tray">
+                  <svg viewBox="0 0 24 24" class="btn-svg"><path d="M12 5L5 12h14L12 5zM5 15h14v2H5v-2z" fill="currentColor"/></svg>
+                  弹出光盘
+                </button>
+                <button class="mac-btn primary-btn" id="btn-start-burn" disabled>
+                  <svg viewBox="0 0 24 24" class="btn-svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+                  开始刻录
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </section>
+        
+        <!-- ================= RUNNING PROCESS PAGE ================= -->
+        <section class="page-content" id="process-page">
+          <div class="process-layout">
+            
+            <div class="process-header">
+              <h2 id="lbl-process-title">正在开始刻录数据...</h2>
+              <p id="lbl-process-subtitle">卷标: <span id="lbl-process-label">20260527170000</span> | 光驱: <span id="lbl-process-drive">等待获取物理光驱...</span></p>
+            </div>
+
+            <div class="process-main-grid">
+              
+              <!-- Stacked visualizer block -->
+              <div class="process-visualizer-block">
+                <div class="animated-tray-container" id="visualizer-tray">
+                  
+                  <div class="laser-head" id="laser-head" style="display: none;">
+                    <div class="laser-source"></div>
+                    <div class="laser-beam"></div>
+                    <!-- White-hot laser engraving focal point -->
+                    <div class="laser-burn-point"></div>
+                    <!-- High-energy physical sparks shooting out -->
+                    <div class="sparkle-particles">
+                      <div class="sparkle-particle"></div>
+                      <div class="sparkle-particle"></div>
+                      <div class="sparkle-particle"></div>
+                      <div class="sparkle-particle"></div>
+                    </div>
+                  </div>
+
+                  <div class="hardware-tray-slider" id="physical-tray">
+                    <div class="glowing-disc-visualizer" id="spinning-disc">
+                      <div class="disc-outer"></div>
+                      <div class="disc-burning-sectors" id="burning-sectors-mask"></div>
+                      <!-- Dual Concentric Glow Rings for Shockwaves -->
+                      <div class="success-glow-ring" id="success-glow-ring"></div>
+                      <div class="success-glow-ring secondary" id="success-glow-ring-2"></div>
+                      <!-- Transient bright white flash layer -->
+                      <div class="success-flash-overlay" id="success-flash-overlay"></div>
+
+                      <!-- Centered premium high-fidelity neon lightning bolt brand logo -->
+                      <div class="disc-brand-logo">
+                        <svg viewBox="0 0 100 100" class="brand-logo-svg">
+                          <defs>
+                            <!-- Metallic & Neon Electric Gradient -->
+                            <linearGradient id="neon-electric-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stop-color="#00f2fe" />
+                              <stop offset="40%" stop-color="#0a84ff" />
+                              <stop offset="100%" stop-color="#9b51e0" />
+                            </linearGradient>
+                            <!-- Native Vector Neon Glow Filter -->
+                            <filter id="neon-glow" x="-30%" y="-30%" width="160%" height="160%">
+                              <feGaussianBlur stdDeviation="3.5" result="blur" />
+                              <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                              </feMerge>
+                            </filter>
+                          </defs>
+                          <!-- Outer Neon Electric Shadow Path (Cyan & Purple Gradient Glow) -->
+                          <path d="M54 16 L37 46 H47 L43 76 L62 42 H50 Z" fill="url(#neon-electric-gradient)" filter="url(#neon-glow)" />
+                          <!-- Inner High-Intensity White Plasma Core (Brighter focal center) -->
+                          <path d="M54 18 L38 46 H47 L44 74 L61 42 H50 Z" fill="#ffffff" opacity="0.95" />
+                        </svg>
+                      </div>
+                      <div class="disc-hole"></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="percent-circle-box" style="display: none;">
+                  <div class="radial-progress-svg-container">
+                    <svg viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="45" class="circle-bg" />
+                      <circle cx="50" cy="50" r="45" class="circle-bar" id="ring-progress-bar" stroke-dasharray="283" stroke-dashoffset="283" />
+                    </svg>
+                    <div class="radial-value" id="lbl-process-percent">0%</div>
+                  </div>
+                </div>
+
+                <!-- Linear Progress Bar -->
+                <div class="process-bar-container" style="width: 100%;">
+                  <div class="process-bar-track" style="height: 6px;">
+                    <div class="process-bar-fill" id="process-bar-fill" style="width: 0%;"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                    <div class="process-time-estimate" id="lbl-process-time" style="text-align: left;">正在估计剩余时间...</div>
+                    <div id="lbl-process-percent" style="font-size: 13px; font-weight: 700; color: var(--accent-color);">0%</div>
+                  </div>
+                </div>
+                
+                <!-- Real-time Double Buffering Monitor -->
+                <div class="double-buffer-monitor" style="width: 100%; margin-top: 0;">
+                  <div class="buffer-item">
+                    <div class="buffer-info">
+                      <span>软件数据缓冲 (Software Buffer)</span>
+                      <span id="lbl-soft-buffer">0%</span>
+                    </div>
+                    <div class="buffer-track">
+                      <div class="buffer-fill" id="soft-buffer-fill" style="width: 0%;">
+                        <div class="buffer-wave"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="buffer-item">
+                    <div class="buffer-info">
+                      <span>设备硬件缓冲 (Hardware Buffer)</span>
+                      <span id="lbl-hard-buffer">0%</span>
+                    </div>
+                    <div class="buffer-track">
+                      <div class="buffer-fill" id="hard-buffer-fill" style="width: 0%;">
+                        <div class="buffer-wave"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="buffer-burnproof">
+                    <span class="burnproof-dot active"></span>
+                    <span id="lbl-burnproof-status">激光防刻死 (BURN-Proof): 安全</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsed log console block (Hidden by default) -->
+              <div class="process-logs-block" id="process-logs-block" style="display: none; width: 100%; flex-direction: column;">
+                <h3 style="font-size: 11px; margin-bottom: 6px; color: var(--text-secondary);">驱动设备刻录日志流</h3>
+                <div class="terminal-console" id="terminal-console" style="height: 140px; margin-bottom: 0;">
+                  <!-- Dynamic log entries will print here -->
+                </div>
+              </div>
+
+              <!-- Action buttons row -->
+              <div class="process-cancel-block" style="display: flex; align-items: center; width: 100%; gap: 10px; margin-top: 6px;">
+                <button class="mac-action-btn" id="btn-toggle-logs" type="button" style="padding: 6px 12px; font-size: 11px; border-radius: 12px;">🔍 显示详细日志</button>
+                <button class="mac-btn secondary-btn danger-hover" id="btn-cancel-burn" style="margin-left: auto;">
+                  取消任务
+                </button>
+
+                <button class="mac-btn primary-btn" id="btn-finish-return" style="display: none; margin-left: 10px;">
+                  完成并返回
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= BURNING HISTORY PAGE ================= -->
+        <section class="page-content" id="history-page">
+          <div class="history-layout">
+             <div class="section-title-bar">
+               <button class="mac-action-btn" id="btn-history-back" style="margin-right: 12px; padding: 6px 12px; font-size: 12px;">← 返回大厅</button>
+               <h2 style="flex: 1;">光盘刻录日志档案</h2>
+               <button class="mac-btn secondary-btn danger-hover" id="btn-clear-history">
+                <svg viewBox="0 0 24 24" class="btn-svg"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/></svg>
+                清空历史档案
+              </button>
+            </div>
+
+            <div class="history-table-wrapper">
+              <table class="file-table" id="history-table">
+                <thead>
+                  <tr>
+                    <th>刻录时间</th>
+                    <th>光盘卷标 (卷名称)</th>
+                    <th>介质类型</th>
+                    <th>数据容量</th>
+                    <th>校验状态</th>
+                    <th>执行状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="history-list-body">
+                  <!-- Dynamic rows -->
+                  <tr>
+                    <td colspan="7" class="td-empty">暂无任何刻录历史记录。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- macOS Style Notification Toast -->
+  <div class="win-toast" id="win-toast">
+    <div class="toast-icon-container">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+    </div>
+    <div class="toast-body">
+      <h4 id="toast-title">FlashBurn 通知</h4>
+      <p id="toast-message">操作已成功执行。</p>
+    </div>
+    <button class="toast-close" id="btn-close-toast">
+      <svg viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"/></svg>
+    </button>
+  </div>
+
+  <!-- Detailed History Modal -->
+  <div class="win-modal-overlay" id="history-modal" style="display: none;">
+    <div class="win-modal">
+      <div class="modal-header">
+        <h3 id="modal-title">刻录驱动会话详情</h3>
+        <button class="icon-only-btn" id="btn-close-modal">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-info-summary">
+          <p><strong>会话卷标：</strong> <span id="modal-label">N/A</span></p>
+          <p><strong>介质类型：</strong> <span id="modal-type">N/A</span></p>
+          <p><strong>最终容量：</strong> <span id="modal-size">N/A</span></p>
+        </div>
+        <h4>刻录控制台归档日志</h4>
+        <div class="terminal-console font-small" id="modal-logs">
+          <!-- Printed log -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="mac-btn primary-btn" id="btn-modal-close-action">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Erase Confirmation Modal (macOS style) -->
+  <div class="win-modal-overlay" id="erase-modal" style="display: none;">
+    <div class="win-modal">
+      <div class="modal-header">
+        <h3>数据擦除确认</h3>
+        <button class="icon-only-btn" id="btn-close-erase-modal">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="modal-body text-center" style="padding: 24px; text-align: center;">
+        <div class="warning-large-icon" style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+        <p class="modal-alert-text" style="font-size: 13px; color: var(--text-main); margin-bottom: 8px;">
+          您即将对位于驱动器 <span id="lbl-erase-drive-letter" style="font-weight: 700; color: var(--accent-color);">G:</span> 中的可重写光盘执行 <b>[快速物理擦除]</b> 操作！
+        </p>
+        <p class="modal-alert-subtext" style="font-size: 11px; color: var(--text-secondary); line-height: 1.6; max-width: 440px; margin: 0 auto;">
+          该操作将擦除光盘上记录的物理引导与区块索引，光盘内所有数据将 <b>永久消失且不可恢复</b>。请务必确认数据已妥善备份，在擦除过程中<b>切勿弹出托盘</b>！
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="mac-btn secondary-btn" id="btn-cancel-erase">取消</button>
+        <button class="mac-btn primary-btn danger-hover" id="btn-confirm-erase">立即擦除</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: none;">
+    <span id="lbl-tray-door-status"></span>
+  </div>
+
+  <!-- Load Renderer code -->
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "name": "flashburn",
+  "version": "1.0.0",
+  "description": "FlashBurn - A modern, minimalist CD/DVD burning application styled in Windows 11 Fluent Design.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "burning",
+    "cd",
+    "dvd",
+    "fluent-design",
+    "windows-11",
+    "electron"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "com.antigravity.flashburn",
+    "productName": "FlashBurn",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
+  }
+}
