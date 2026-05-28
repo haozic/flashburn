@@ -1,4 +1,4 @@
-# ⚡ FlashBurn - Windows 物理光盘刻录工具
+# ⚡ FlashBurn (闪刻) - 极简现代化物理光盘刻录与克隆桌面客户端
 
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078d4?style=flat-square&logo=windows)](https://www.microsoft.com/windows)
 [![Framework](https://img.shields.io/badge/Framework-Electron-478aef?style=flat-square&logo=electron)](https://www.electronjs.org/)
@@ -6,10 +6,6 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 FlashBurn 是一款为 Windows 打造的轻量级 CD/DVD 刻录工具，采用 Windows 11 Fluent Design 视觉语言。100% 原生物理硬件支持，无需第三方驱动。
-
-# ⚡ FlashBurn (闪刻) - 极简现代化物理光盘刻录与克隆桌面客户端
-
-**FlashBurn（闪刻）** 是一款专为 Windows 平台打造的、操作极简且极具仪式感的专业物理光盘刻录与 ISO 提取克隆的原生桌面应用程序。软件遵循 **Windows 11 Fluent Design 2** 视觉语言，旨在彻底淘汰沉重复杂的传统刻录软件，为用户呈现"小而美"的高级工艺品级交互体验。
 
 本项目坚持 **100% 物理硬件独占** 与 **极致静音设计**，去除了一切鸡肋的仿真逻辑，为您带来极佳的物理刻录质感。
 
@@ -105,30 +101,4 @@ npm run dist
 
 ## ⚖️ 开源协议
 
-本项目采用 **MIT License** 许可协议开源，完整协议内容请查阅项目中的 `LICENSE` 文件。
-
-## 🚀 快速开始
-
-### 运行
-\\\ash
-npm install
-npm start
-\\\`n
-### 构建 EXE
-\\\ash
-npm run dist
-\\\`n生成的 \FlashBurn 1.0.0.exe\ 可直接在任何 Windows 电脑上运行。
-
-## 📁 项目结构
-
-\\\`n├── main.js           # Electron 主进程
-├── preload.js        # IPC 安全桥接
-├── renderer.js       # 前端交互逻辑
-├── index.html        # UI 页面
-├── styles.css        # Fluent Design 样式
-├── detect_drives.ps1 # Windows COM/IMAPI2 调用脚本
-└── package.json      # 项目配置
-\\\`n
-## ⚖️ 许可
-
-MIT License
+本项目采用 **MIT License** 许可协议开源
